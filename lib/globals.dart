@@ -28,6 +28,13 @@ const messageUrl = 'https://www.steamtrades.com/messages';
 const loginUrl = 'https://www.steamtrades.com/?login';
 const donateUrl = 'https://selosh.gitlab.io/donate/';
 
+const List<String> blockedDomains = [
+  ".*nitropay.*",
+  ".*rubiconproject.*",
+  ".*google-analytics.*",
+  ".*googletagmanager.*"
+];
+
 const String groupKey = 'io.gitlab.selosh.gametrader.messages';
 const String groupChannelId = 'message_channel';
 const String groupChannelName = 'Message Channel';

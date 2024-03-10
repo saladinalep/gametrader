@@ -205,6 +205,15 @@ class _HomePageState extends State<HomePage> {
                 onWebViewCreated: (controller) async {
                   webViewController = controller;
                 },
+                initialSettings: InAppWebViewSettings(
+                    contentBlockers: blockedDomains
+                        .map((filter) => ContentBlocker(
+                            trigger: ContentBlockerTrigger(
+                              urlFilter: filter,
+                            ),
+                            action: ContentBlockerAction(
+                                type: ContentBlockerActionType.BLOCK)))
+                        .toList()),
                 onPermissionRequest: (controller, request) async {
                   return PermissionResponse(
                       resources: request.resources,

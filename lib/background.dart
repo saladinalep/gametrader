@@ -30,6 +30,15 @@ void callbackDispatcher() {
     bool doneLoading = false;
     HeadlessInAppWebView headlessView = HeadlessInAppWebView(
         initialUrlRequest: URLRequest(url: WebUri(messageUrl)),
+        initialSettings: InAppWebViewSettings(
+            contentBlockers: blockedDomains
+                .map((filter) => ContentBlocker(
+                    trigger: ContentBlockerTrigger(
+                      urlFilter: filter,
+                    ),
+                    action: ContentBlockerAction(
+                        type: ContentBlockerActionType.BLOCK)))
+                .toList()),
         onLoadStop: (controller, url) async {
           String html = await controller.evaluateJavascript(
               source: "document.documentElement.outerHTML;");
