@@ -17,6 +17,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:workmanager/workmanager.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:async';
 import 'globals.dart';
 import 'scrape.dart';
 
@@ -27,7 +28,7 @@ List<String> _unreadMessages = [];
 @pragma('vm:entry-point')
 void callbackDispatcher() {
   Workmanager().executeTask((task, inputData) async {
-    bool doneLoading = false;
+    Completer<bool> completer = Completer<bool>();
     HeadlessInAppWebView headlessView = HeadlessInAppWebView(
         initialUrlRequest: URLRequest(url: WebUri(messageUrl)),
         initialSettings: InAppWebViewSettings(
@@ -43,11 +44,10 @@ void callbackDispatcher() {
           String html = await controller.evaluateJavascript(
               source: "document.documentElement.outerHTML;");
           await _checkForMessages(html);
-          doneLoading = true;
+          completer.complete(true);
         },
         onReceivedError: (controller, request, error) {
           logger.e("Error loading messages page: $error");
-          doneLoading = true;
         });
 
     const InitializationSettings initializationSettings =
@@ -61,8 +61,11 @@ void callbackDispatcher() {
     logger.d("Loaded processed links: $_unreadPermalinks");
 
     await headlessView.run();
-    while (!doneLoading) {
-      await Future.delayed(const Duration(seconds: 2));
+
+    try {
+      await completer.future.timeout(const Duration(seconds: 30));
+    } catch (e) {
+      logger.e("Request timed out: $e");
     }
 
     await headlessView.dispose();
