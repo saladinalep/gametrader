@@ -64,6 +64,8 @@ void callbackDispatcher() {
     while (!doneLoading) {
       await Future.delayed(const Duration(seconds: 2));
     }
+
+    await headlessView.dispose();
     return Future.value(true);
   });
 }
