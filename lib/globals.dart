@@ -29,10 +29,10 @@ const loginUrl = 'https://www.steamtrades.com/?login';
 const donateUrl = 'https://selosh.gitlab.io/donate/';
 
 const List<String> blockedDomains = [
-  ".*nitropay.*",
-  ".*rubiconproject.*",
-  ".*google-analytics.*",
-  ".*googletagmanager.*"
+  "nitropay.com",
+  "rubiconproject.com",
+  "google-analytics.com",
+  "googletagmanager.com"
 ];
 
 const String groupKey = 'io.gitlab.selosh.gametrader.messages';

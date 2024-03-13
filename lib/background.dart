@@ -32,14 +32,16 @@ void callbackDispatcher() {
     HeadlessInAppWebView headlessView = HeadlessInAppWebView(
         initialUrlRequest: URLRequest(url: WebUri(messageUrl)),
         initialSettings: InAppWebViewSettings(
-            contentBlockers: blockedDomains
-                .map((filter) => ContentBlocker(
-                    trigger: ContentBlockerTrigger(
-                      urlFilter: filter,
-                    ),
-                    action: ContentBlockerAction(
-                        type: ContentBlockerActionType.BLOCK)))
-                .toList()),
+          useShouldInterceptRequest: true,
+        ),
+        shouldInterceptRequest: (controller, request) async {
+          if (blockedDomains
+              .any((domain) => request.url.host.contains(domain))) {
+            return WebResourceResponse(statusCode: 403);
+          } else {
+            return null;
+          }
+        },
         onLoadStop: (controller, url) async {
           String html = await controller.evaluateJavascript(
               source: "document.documentElement.outerHTML;");

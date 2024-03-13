@@ -206,14 +206,16 @@ class _HomePageState extends State<HomePage> {
                   webViewController = controller;
                 },
                 initialSettings: InAppWebViewSettings(
-                    contentBlockers: blockedDomains
-                        .map((filter) => ContentBlocker(
-                            trigger: ContentBlockerTrigger(
-                              urlFilter: filter,
-                            ),
-                            action: ContentBlockerAction(
-                                type: ContentBlockerActionType.BLOCK)))
-                        .toList()),
+                  useShouldInterceptRequest: true,
+                ),
+                shouldInterceptRequest: (controller, request) async {
+                  if (blockedDomains
+                      .any((domain) => request.url.host.contains(domain))) {
+                    return WebResourceResponse(statusCode: 403);
+                  } else {
+                    return null;
+                  }
+                },
                 onPermissionRequest: (controller, request) async {
                   return PermissionResponse(
                       resources: request.resources,
