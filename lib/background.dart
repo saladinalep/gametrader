@@ -68,6 +68,7 @@ void callbackDispatcher() {
       await completer.future.timeout(const Duration(seconds: 30));
     } catch (e) {
       logger.e("Request timed out: $e");
+      _saveResult("Request timed out");
     }
 
     await headlessView.dispose();
